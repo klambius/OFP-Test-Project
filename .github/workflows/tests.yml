@@ -26,8 +26,20 @@ jobs:
       - name: Install Chrome
         run: |
           sudo apt-get update
-          sudo apt-get install -y chromium-browser
+          sudo apt-get install -y chromium-browser xvfb
           sudo ln -sf /usr/bin/chromium-browser /usr/bin/google-chrome
+
+      - name: Install Java (required for Allure CLI)
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+
+      - name: Install Allure CLI
+        run: |
+          wget https://github.com/allure-framework/allure2/releases/download/2.29.0/allure-2.29.0.tgz
+          sudo tar -zxvf allure-2.29.0.tgz -C /opt
+          echo "/opt/allure-2.29.0/bin" >> $GITHUB_PATH
 
       - name: Install dependencies
         run: |
@@ -39,15 +51,13 @@ jobs:
       - name: Run tests with Allure results
         run: |
           source .venv/bin/activate
-          pytest tests/ --alluredir=./allure-results -v
+          pytest tests/ --alluredir=./allure-results -v --tb=short
         env:
-          BASE_URL: ${{ vars.BASE_URL }}
+          BASE_URL: ${{ vars.BASE_URL || 'https://example.com' }}
 
       - name: Generate Allure report
-        uses: allure-framework/allure-report@v2
-        with:
-          allure_results: allure-results
-          allure_report: allure-report
+        run: |
+          allure generate ./allure-results -o ./allure-report --clean
 
       - name: Upload Allure report as artifact
         uses: actions/upload-artifact@v4
@@ -55,3 +65,13 @@ jobs:
           name: allure-report
           path: ./allure-report
           retention-days: 7
+
+      # Опционально: публикация на GitHub Pages
+      - name: Deploy report to GitHub Pages
+        if: github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./allure-report
+          destination_dir: reports/${{ github.run_number }}
+          keep_files: true
