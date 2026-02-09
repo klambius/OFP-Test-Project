@@ -13,20 +13,17 @@ jobs:
     timeout-minutes: 15
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: pip
 
-      # Устанавливаем Chrome нормально
       - name: Install Google Chrome
         run: |
           sudo apt-get update
-          sudo apt-get install -y google-chrome-stable xvfb
+          sudo apt-get install -y google-chrome-stable xvfb default-jre
 
       - name: Install dependencies
         run: |
@@ -40,14 +37,23 @@ jobs:
         run: |
           mkdir -p allure-results
           Xvfb :99 -screen 0 1920x1080x24 &
-          pytest tests/ \
-            --alluredir=allure-results \
-            -v --tb=short
+          pytest tests/ --alluredir=allure-results -v --tb=short
+
+      - name: Install Allure CLI
+        if: always()
+        run: |
+          curl -o allure.tgz -Ls https://github.com/allure-framework/allure2/releases/latest/download/allure-2.27.0.tgz
+          sudo tar -zxvf allure.tgz -C /opt/
+          sudo ln -s /opt/allure-2.27.0/bin/allure /usr/bin/allure
 
       - name: Generate Allure report
-        uses: simple-elf/allure-report-action@v1.7
         if: always()
-        with:
-          allure_results: allure-results
-          allure_report: allure-report
+        run: |
+          allure generate allure-results -o allure-report --clean
 
+      - name: Upload Allure report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report
