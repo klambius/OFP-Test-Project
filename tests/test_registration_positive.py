@@ -14,7 +14,7 @@ class TestRegistrationPositive:
             username="john_doe_test123",
             password="Password123!"
         )
-        register_page.click_captcha
+
         register_page.submit()
 
         assert register_page.is_error_displayed(), (
