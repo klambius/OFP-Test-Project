@@ -1,5 +1,9 @@
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
+from selenium.common.exceptions import (
+    ElementClickInterceptedException,
+    StaleElementReferenceException,
+)
 
 
 class BasePage:
@@ -14,8 +18,19 @@ class BasePage:
         return self.wait.until(ec.presence_of_element_located(locator))
 
     def click(self, locator) -> None:
-        element = self.wait.until(ec.element_to_be_clickable(locator))
-        element.click()
+        element = self.wait.until(ec.presence_of_element_located(locator))
+
+        # прокрутка в центр экрана
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView({block: 'center'});", element
+        )
+
+        try:
+            self.wait.until(ec.element_to_be_clickable(locator))
+            element.click()
+        except (ElementClickInterceptedException, StaleElementReferenceException):
+            # fallback для CI / рекламы / iframe
+            self.driver.execute_script("arguments[0].click();", element)
 
     def type(self, locator, text: str) -> None:
         element = self.find(locator)
