@@ -1,4 +1,3 @@
-from socket import timeout
 from pages.register_page import RegisterPage
 
 
