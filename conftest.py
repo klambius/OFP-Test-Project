@@ -6,7 +6,7 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
 @pytest.fixture
-def initialize_web_driver():
+def driver():
     chrome_options = Options()
     chrome_options.add_argument("--start-maximized --disable-extensions")
 
