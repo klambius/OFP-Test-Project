@@ -11,8 +11,8 @@ class RegisterPage(BasePage):
     USERNAME_INPUT = (By.ID, "userName")
     PASSWORD_INPUT = (By.ID, "password")
     REGISTER_BUTTON = (By.ID, "register")
-    BACK_TO_LOGIN_BUTTON = (By.CLASS_NAME, "recaptcha-checkbox-border")
-    CAPTCHA = (By.ID, )
+    BACK_TO_LOGIN_BUTTON = (By.ID, "gotologin")
+    CAPTCHA = (By.CLASS_NAME, "recaptcha-checkbox-border")
 
     ERROR_MESSAGE = (By.ID, "name")  # общий контейнер ошибок
 
