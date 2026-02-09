@@ -5,7 +5,7 @@ on:
     branches: [ main, develop ]
   pull_request:
     branches: [ main ]
-  workflow_dispatch:  # ручной запуск из UI GitHub
+  workflow_dispatch:
 
 jobs:
   test:
@@ -23,7 +23,7 @@ jobs:
           cache: "pip"
           cache-dependency-path: "requirements.txt"
 
-      - name: Install Chrome and ChromeDriver (для Selenium)
+      - name: Install Chrome
         run: |
           sudo apt-get update
           sudo apt-get install -y chromium-browser
@@ -39,20 +39,15 @@ jobs:
       - name: Run tests with Allure results
         run: |
           source .venv/bin/activate
-          pytest tests/ \
-            --alluredir=./allure-results \
-            --allure-no-capture \
-            -v
+          pytest tests/ --alluredir=./allure-results -v
         env:
-          # Опционально: переменные окружения для тестов
           BASE_URL: ${{ vars.BASE_URL }}
-          USERNAME: ${{ secrets.TEST_USERNAME }}
-          PASSWORD: ${{ secrets.TEST_PASSWORD }}
 
       - name: Generate Allure report
-        uses: simple-d/awesome-allure-report@v1.3.0
+        uses: allure-framework/allure-report@v2
         with:
-          allure_results: ./allure-results
+          allure_results: allure-results
+          allure_report: allure-report
 
       - name: Upload Allure report as artifact
         uses: actions/upload-artifact@v4
@@ -60,12 +55,3 @@ jobs:
           name: allure-report
           path: ./allure-report
           retention-days: 7
-
-      - name: Publish report to GitHub Pages (опционально)
-        if: github.ref == 'refs/heads/main'
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./allure-report
-          destination_dir: ./reports/${{ github.run_id }}
-          keep_files: true
