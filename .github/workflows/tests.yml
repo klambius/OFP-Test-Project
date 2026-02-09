@@ -42,9 +42,10 @@ jobs:
       - name: Install Allure CLI
         if: always()
         run: |
-          curl -o allure.tgz -Ls https://github.com/allure-framework/allure2/releases/latest/download/allure-2.27.0.tgz
-          sudo tar -zxvf allure.tgz -C /opt/
-          sudo ln -s /opt/allure-2.27.0/bin/allure /usr/bin/allure
+          ALLURE_VERSION=2.27.0
+          curl -Ls https://github.com/allure-framework/allure2/releases/download/${ALLURE_VERSION}/allure-${ALLURE_VERSION}.tgz -o allure.tgz
+          tar -zxvf allure.tgz
+          echo "$PWD/allure-${ALLURE_VERSION}/bin" >> $GITHUB_PATH
 
       - name: Generate Allure report
         if: always()
