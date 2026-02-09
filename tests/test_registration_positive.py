@@ -1,3 +1,4 @@
+from socket import timeout
 from pages.register_page import RegisterPage
 
 
@@ -15,7 +16,7 @@ class TestRegistrationPositive:
         )
         register_page.click_captcha
         register_page.submit()
-        
+
         assert register_page.is_error_displayed(), (
             "Expected error message due to missing CAPTCHA, "
             "but no error was displayed"
