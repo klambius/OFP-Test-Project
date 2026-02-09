@@ -12,7 +12,6 @@ class RegisterPage(BasePage):
     PASSWORD_INPUT = (By.ID, "password")
     REGISTER_BUTTON = (By.ID, "register")
     BACK_TO_LOGIN_BUTTON = (By.ID, "gotologin")
-    CAPTCHA = (By.CLASS_NAME, "recaptcha-checkbox-border")
 
     ERROR_MESSAGE = (By.ID, "name")  # общий контейнер ошибок
 
@@ -30,9 +29,6 @@ class RegisterPage(BasePage):
 
     def fill_password(self, password: str) -> None:
         self.type(self.PASSWORD_INPUT, password)
-
-    def click_captcha(self):
-        self.click(self.CAPTCHA)
 
     def submit(self) -> None:
         self.click(self.REGISTER_BUTTON)
