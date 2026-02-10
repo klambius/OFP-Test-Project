@@ -2,3 +2,4 @@ pytest==7.4.4
 selenium==4.40.0
 webdriver-manager==4.0.2
 allure-pytest
+pytest-bdd==7.2.0
