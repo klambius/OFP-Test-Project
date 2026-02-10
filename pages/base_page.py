@@ -46,3 +46,23 @@ class BasePage:
 
     def get_text(self, locator) -> str:
         return self.find(locator).text
+
+    def get_attr(self, locator, attr_name: str) -> str | None:
+        element = self.find(locator)
+        return element.get_attribute(attr_name)
+
+    def is_input_valid(self, locator) -> bool:
+        """
+        Uses browser native validation (HTML5 constraint validation API).
+        Returns True if element.checkValidity() is True, else False.
+        """
+        element = self.find(locator)
+        return bool(self.driver.execute_script("return arguments[0].checkValidity();", element))
+
+    def get_validation_message(self, locator) -> str:
+        """
+        Returns browser native validation message for invalid input.
+        Empty string if valid.
+        """
+        element = self.find(locator)
+        return str(self.driver.execute_script("return arguments[0].validationMessage;", element))
