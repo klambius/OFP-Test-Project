@@ -50,3 +50,6 @@ class RegisterPage(BasePage):
 
     def is_error_displayed(self) -> bool:
         return self.is_visible(self.ERROR_MESSAGE)
+
+    def get_error_message_text(self) -> str:
+        return self.get_text(self.ERROR_MESSAGE).strip()
