@@ -16,7 +16,7 @@ class TestRegistrationValidation:
 
         # Проверяем клиентскую валидность username без сабмита
         assert not register_page.is_input_valid(register_page.USERNAME_INPUT), (
-            "Username starting with a digit should be invalid by client-side validation"
+            "Имя пользователя начинающееся с цифры должно быть недопустимым по клиентской валидации"
         )
 
         validation_msg = register_page.get_validation_message(
@@ -36,7 +36,7 @@ class TestRegistrationValidation:
 
         # Проверяем minlength/валидность password без сабмита
         assert not register_page.is_input_valid(register_page.PASSWORD_INPUT), (
-            "Password shorter than 8 characters should be invalid by client-side validation"
+            "Пароль короче 8 символов должен быть недопустимым по клиентской валидации"
         )
 
         validation_msg = register_page.get_validation_message(
